@@ -48,9 +48,22 @@ body {
   background-color: var(--desk-bg);
   background-image: var(--desk-texture);
   color: var(--text-ink);
-  overflow: hidden; /* Prevent body scroll, handle inside screens */
+ overflow-x: hidden;
+overflow-y: auto; /* Prevent body scroll, handle inside screens */
+}
+html, body {
+  height: 100%;
 }
 
+body {
+  min-height: 100vh;
+}
+.screen {
+  min-height: 100vh;
+}
+#tutorial-screen {
+  min-height: 100vh;
+}
 img,
 svg,
 video,
