@@ -49,20 +49,21 @@ body {
   background-image: var(--desk-texture);
   color: var(--text-ink);
  overflow-x: hidden;
-overflow-y: auto; /* Prevent body scroll, handle inside screens */
+overflow-y: auto;
 }
 html, body {
   height: 100%;
 }
 
 body {
-  min-height: 100vh;
+  min-height: 100dvh;
 }
 .screen {
-  min-height: 100vh;
+  min-height: 100dvh;
+  padding: clamp(16px, 3vw, 24px);
 }
 #tutorial-screen {
-  min-height: 100vh;
+  min-height: 100dvh;
 }
 img,
 svg,
@@ -75,14 +76,25 @@ canvas {
 .screen {
   display: none;
   flex-direction: column;
-  position: absolute;
+  position: relative;
   inset: 0;
   min-height: 100dvh;
   padding: clamp(16px, 3vw, 24px);
   opacity: 0;
   transition: opacity 0.4s ease;
   overflow-y: auto;
+  padding-top: 80px;
   overflow-x: hidden;
+}
+
+.tutorial-scene {
+  grid-template-columns: 1fr 1fr;
+}
+
+@media (max-width: 900px) {
+  .tutorial-scene {
+    grid-template-columns: 1fr;
+  }
 }
 
 .screen.active {
@@ -189,6 +201,11 @@ canvas {
   margin: 20px auto 40px;
   color: #ccc;
   padding: 0 20px;
+}
+
+* {
+    /* ... */
+    touch-action: manipulation;
 }
 
 /* === BUTTONS === */
@@ -1709,8 +1726,8 @@ canvas {
   bottom: -20px;
   left: -20px;
   z-index: 120;
-  width: clamp(170px, 26vw, 350px);
-  height: clamp(170px, 26vw, 350px);
+width: clamp(100px, 12vw, 180px);
+height: clamp(100px, 12vw, 180px);
   pointer-events: none;
   transition: 0.4s ease;
   transform-origin: bottom left;
@@ -1985,6 +2002,10 @@ canvas {
   border-radius: 8px;
   width: 90%;
   max-width: 400px;
+
+  width: min(480px, 92vw);   /* ⬅️ ini penting */
+  max-height: 90dvh;         /* ⬅️ biar gak keluar layar */
+  overflow-y: auto;   
   font-family: var(--font-sans);
   box-shadow: 0 5px 20px rgba(0, 0, 0, 0.5);
   border: 2px solid var(--text-ink);
@@ -2276,7 +2297,23 @@ canvas {
   .hud-stat:nth-child(3), .hud-stat:nth-child(4) {
     display: none; /* Hide corruption/rep on mobile to save space */
   }
-
+  .hud-right {
+    display: flex; /* Pastikan tetap tampil */
+    padding-left: 5px;
+  }
+  
+  .hud-left {
+    /* Beri ruang untuk tombol di kanan */
+    max-width: 75%; 
+    overflow: hidden;
+  }
+  
+  .hud-stat .value {
+    font-size: 11px; /* Font lebih kecil lagi */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
   /* Documents */
   .document-wrapper {
     padding: 30px 20px;
@@ -2628,7 +2665,21 @@ canvas {
   }
 
   .hud-right {
-    display: none;
+    display: flex; /* Pastikan tetap tampil */
+    padding-left: 5px;
+  }
+  
+  .hud-left {
+    /* Beri ruang untuk tombol di kanan */
+    max-width: 75%; 
+    overflow: hidden;
+  }
+  
+  .hud-stat .value {
+    font-size: 11px; /* Font lebih kecil lagi */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   .hud-left {

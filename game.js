@@ -114,7 +114,7 @@ const GameState = {
         this.caseStars = {};
         this.currentLevel = 0;
         this.playerName = keepName;
-        this.tutorialCompleted = keepTutorial;
+        this.tutorialCompleted = false;
         this.characterVisible = keepCharacter;
         this.saveGame();
     },

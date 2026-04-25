@@ -354,7 +354,7 @@ const UI = {
 
         const questContainer = document.getElementById('quest-container');
         if (questContainer) {
-            questContainer.classList.toggle('hidden', screenId === 'hub-screen' || screenId === 'title-screen' || screenId === 'intro-screen');
+            questContainer.classList.toggle('hidden', screenId === 'hub-screen' || screenId === 'title-screen' || screenId === 'intro-screen'||screenId === 'briefing-screen' || screenId === 'case-screen' );
         }
 
         if (window.audio) {
