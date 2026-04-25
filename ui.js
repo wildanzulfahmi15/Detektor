@@ -354,7 +354,7 @@ const UI = {
 
         const questContainer = document.getElementById('quest-container');
         if (questContainer) {
-            questContainer.classList.toggle('hidden', screenId === 'hub-screen' || screenId === 'title-screen' || screenId === 'intro-screen'||screenId === 'briefing-screen' || screenId === 'case-screen' );
+            questContainer.classList.toggle('hidden', screenId === 'hub-screen' || screenId === 'title-screen' || screenId === 'intro-screen'||screenId === 'briefing-screen' );
         }
 
         if (window.audio) {
@@ -911,16 +911,100 @@ const UI = {
     },
 
     // --- Quest & Achievement Rendering ---
-    renderQuests() {
-        const container = document.getElementById('quest-container');
-        container.innerHTML = '';
-        game.quests.forEach(q => {
-            const el = document.createElement('div');
-            el.className = `quest-item ${q.completed ? 'completed' : ''}`;
-            el.innerHTML = `<div class="quest-item-title">Misi</div><div>${q.title}</div>`;
-            container.appendChild(el);
-        });
-    },
+renderQuests() {
+  const container = document.getElementById('quest-container');
+  if (!container) return;
+
+  // Pertama kali: bangun skeleton panel jika belum ada
+  if (!container.querySelector('.quest-panel-toggle')) {
+    container.innerHTML = `
+      <button class="quest-panel-toggle" id="questToggleBtn">
+        <div class="quest-toggle-left">
+          <span>&#128196; Misi Level</span>
+          <span class="quest-count-badge" id="questCountBadge">0/0</span>
+        </div>
+        <span class="quest-chevron" id="questChevron">&#9660;</span>
+      </button>
+      <div class="quest-panel-body" id="questPanelBody">
+        <div class="quest-panel-header">
+          <span class="quest-case-label" id="questCaseLabel">–</span>
+          <span class="quest-stars-sm" id="questStarsEl">&#9734;&#9734;&#9734;</span>
+        </div>
+        <div id="questItemList"></div>
+        <div class="quest-panel-footer">
+          <div class="quest-progress-track">
+            <div class="quest-progress-fill" id="questProgressFill" style="width:0%"></div>
+          </div>
+          <span class="quest-prog-text" id="questProgText">0 / 0</span>
+        </div>
+      </div>
+    `;
+    document.getElementById('questToggleBtn').addEventListener('click', () => {
+      this._questPanelOpen = !this._questPanelOpen;
+      this._syncQuestPanel();
+    });
+  }
+
+  const quests = game.quests || [];
+  const done = quests.filter(q => q.completed).length;
+  const total = quests.length;
+  const c = game.getCurrentCase();
+
+  // Update badge
+  const badge = document.getElementById('questCountBadge');
+  if (badge) {
+    badge.textContent = `${done}/${total}`;
+    badge.className = done === total && total > 0 ? 'quest-count-badge all-done' : 'quest-count-badge';
+  }
+
+  // Update case label
+  const caseLabel = document.getElementById('questCaseLabel');
+  if (caseLabel) caseLabel.textContent = c ? c.name.slice(0, 28) + (c.name.length > 28 ? '…' : '') : '–';
+
+  // Stars
+  const starCount = done >= total && total > 0 ? 3 : done >= Math.ceil(total * 0.66) ? 2 : done > 0 ? 1 : 0;
+  const starsEl = document.getElementById('questStarsEl');
+  if (starsEl) starsEl.innerHTML = '&#9733;'.repeat(starCount) + '&#9734;'.repeat(3 - starCount);
+
+  // Quest items
+  const list = document.getElementById('questItemList');
+  if (list) {
+    list.innerHTML = quests.map(q => `
+      <div class="quest-item ${q.completed ? 'completed' : ''}">
+        <div class="quest-icon-circle">
+          <div class="quest-checkmark"></div>
+          ${!q.completed ? '<div class="quest-dot-inner"></div>' : ''}
+        </div>
+        <div class="quest-info">
+          <div class="quest-item-title">${q.title}</div>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  // Progress bar
+  const pct = total > 0 ? Math.round((done / total) * 100) : 0;
+  const fill = document.getElementById('questProgressFill');
+  if (fill) fill.style.width = pct + '%';
+  const progText = document.getElementById('questProgText');
+  if (progText) progText.textContent = `${done} / ${total}`;
+
+  this._syncQuestPanel();
+},
+
+_syncQuestPanel() {
+  const body = document.getElementById('questPanelBody');
+  const chevron = document.getElementById('questChevron');
+  const btn = document.getElementById('questToggleBtn');
+  if (!body) return;
+  body.classList.toggle('open', !!this._questPanelOpen);
+  chevron && chevron.classList.toggle('open', !!this._questPanelOpen);
+  // Pulse hanya saat tertutup dan ada misi belum selesai
+  const quests = game.quests || [];
+  const done = quests.filter(q => q.completed).length;
+  const hasIncomplete = done < quests.length && quests.length > 0;
+  if (btn) btn.classList.toggle('has-incomplete', hasIncomplete && !this._questPanelOpen);
+},
 
     showAchievement(title, desc) {
         const popup = document.getElementById('achievement-popup');
@@ -979,5 +1063,7 @@ const UI = {
 window.UI = UI;
 
 document.addEventListener('DOMContentLoaded', () => {
+    _questPanelOpen: false,
+
     UI.init();
 });
