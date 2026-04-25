@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 180" role="img" aria-label="Ikon quest">
+  <path d="M48 24h76c14 0 24 10 24 24v84c0 14-10 24-24 24H48c-14 0-24-10-24-24V48c0-14 10-24 24-24z" fill="#fdfaf6" stroke="#5c4d4d" stroke-width="10"/>
+  <path d="M58 62h64M58 88h64M58 114h42" stroke="#4a6c8c" stroke-width="10" stroke-linecap="round"/>
+  <path d="M43 49l9 9 18-22" fill="none" stroke="#2e7d32" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

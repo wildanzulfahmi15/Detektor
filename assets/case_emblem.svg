@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160" role="img" aria-label="Emblem berkas kasus">
+  <rect x="26" y="38" width="108" height="86" rx="10" fill="#fdfaf6" stroke="#5c4d4d" stroke-width="8"/>
+  <path d="M26 58h42l12-14h54v28H26z" fill="#e6c27a" stroke="#5c4d4d" stroke-width="8" stroke-linejoin="round"/>
+  <path d="M52 88h56M52 106h40" stroke="#4a6c8c" stroke-width="8" stroke-linecap="round"/>
+</svg>

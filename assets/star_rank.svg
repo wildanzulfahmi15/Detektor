@@ -1,0 +1,4 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 180" role="img" aria-label="Bintang penilaian">
+  <path d="M90 18l20 44 48 6-36 32 10 47-42-24-42 24 10-47-36-32 48-6z" fill="#d4af37" stroke="#806b00" stroke-width="9" stroke-linejoin="round"/>
+  <circle cx="90" cy="91" r="21" fill="#fdfaf6" opacity=".75"/>
+</svg>

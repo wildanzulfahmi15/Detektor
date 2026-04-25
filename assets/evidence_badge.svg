@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 180" role="img" aria-label="Ikon bukti tersimpan">
+  <circle cx="90" cy="90" r="78" fill="#fdfaf6" stroke="#4a6c8c" stroke-width="10"/>
+  <path d="M55 94l23 24 50-62" fill="none" stroke="#2e7d32" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M45 42h90M45 138h90" stroke="#dcd0c0" stroke-width="8" stroke-linecap="round"/>
+</svg>

@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detektor: Investigasi Dokumen</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- HUD: Brass Nameplate -->
+    <div id="hud">
+        <div class="hud-left">
+            <div class="hud-stat">
+                <span class="label">Anggaran Operasional</span>
+                <span class="value" id="hud-funds">Rp 5.000</span>
+            </div>
+            <div class="hud-stat">
+                <span class="label">Tingkat Kasus</span>
+                <span class="value" id="hud-level">Desa</span>
+            </div>
+        </div>
+        <div class="hud-right">
+            <div class="hud-stat">
+                <span class="label">Indeks Korupsi</span>
+                <span class="value" id="hud-corruption">75%</span>
+            </div>
+            <div class="hud-stat">
+                <span class="label">Reputasi Publik</span>
+                <span class="value" id="hud-rep">50</span>
+            </div>
+            <button class="hud-settings-btn" id="btn-open-settings-hud" title="Pengaturan">⚙</button>
+        </div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div id="settings-modal" class="hidden">
+        <div class="settings-content">
+            <h2>Pengaturan Sistem</h2>
+            <div class="settings-group">
+                <label>Volume Musik (BGM)</label>
+                <input type="range" id="setting-bgm" min="0" max="1" step="0.1" value="0.5">
+            </div>
+            <div class="settings-group">
+                <label>Volume Efek Suara (SFX)</label>
+                <input type="range" id="setting-sfx" min="0" max="1" step="0.1" value="0.8">
+            </div>
+            <div class="settings-group">
+                <label>Kecepatan Teks Dialog</label>
+                <select id="setting-text-speed">
+                    <option value="50">Normal</option>
+                    <option value="20">Cepat</option>
+                    <option value="0">Instan</option>
+                </select>
+            </div>
+            <div class="settings-group">
+                <label for="setting-player-name">Nama Agen</label>
+                <input type="text" id="setting-player-name" maxlength="20" placeholder="Nama agen">
+                <button class="btn btn-outline" id="btn-save-player-name" style="margin-top: 10px;">Simpan Nama</button>
+            </div>
+            <div class="settings-group settings-inline">
+                <label for="setting-show-character">Tampilkan Foto MC</label>
+                <input type="checkbox" id="setting-show-character" checked>
+            </div>
+            <button class="btn btn-danger" id="btn-reset-progress" style="width: 100%;">Reset Level</button>
+            <button class="btn btn-primary" id="btn-close-settings" style="width: 100%; margin-top: 15px;">Tutup</button>
+        </div>
+    </div>
+
+    <!-- App Dialog: replaces browser alert/confirm -->
+    <div id="app-dialog" class="app-dialog hidden" role="dialog" aria-modal="true" aria-labelledby="app-dialog-title">
+        <div class="app-dialog-card">
+            <div class="app-dialog-accent" id="app-dialog-accent"></div>
+            <h2 id="app-dialog-title">Informasi</h2>
+            <div id="app-dialog-message" class="app-dialog-message"></div>
+            <div class="app-dialog-actions">
+                <button class="btn btn-outline" id="app-dialog-cancel">Batal</button>
+                <button class="btn btn-primary" id="app-dialog-confirm">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast-container" aria-live="polite" aria-atomic="true"></div>
+
+    <!-- Intro / Onboarding Screen -->
+    <div id="intro-screen" class="screen active">
+        <button id="btn-open-settings" style="position: absolute; top: 20px; right: 20px; background: transparent; border: none; font-size: 24px; cursor: pointer;">⚙️</button>
+        <div class="intro-box">
+            <h1>DETEKTOR</h1>
+            <p>Selamat datang di Unit Tindak Pidana Korupsi. Negara membutuhkan ketelitian Anda.</p>
+            <div style="margin: 20px 0;">
+                <label for="input-player-name" style="display:block; margin-bottom:10px; font-weight:bold;">Masukkan Nama Agen:</label>
+                <input type="text" id="input-player-name" placeholder="Ketik nama Anda di sini..." maxlength="20">
+            </div>
+            <button class="btn btn-primary" id="btn-submit-name" style="width: 100%;">Lapor Bertugas</button>
+        </div>
+    </div>
+
+    <!-- Title Screen -->
+    <div id="title-screen" class="screen">
+        <button id="btn-open-settings-title" class="screen-settings-btn">⚙</button>
+        <div class="title-logo">
+            <h1>DETEKTOR</h1>
+        </div>
+        <p class="title-tagline">Tugas Anda adalah meneliti dokumen pemerintahan, menemukan kejanggalan yang tersembunyi, mengumpulkan bukti dari berbagai sumber, dan mengambil keputusan. Hati-hati, setiap keputusan berdampak pada karir Anda dan keuangan negara.</p>
+        <button class="btn btn-outline" style="color:white; border-color:white;" id="btn-start-game">Mulai Tugas</button>
+    </div>
+
+    <!-- Dedicated Tutorial Scene -->
+    <div id="tutorial-screen" class="screen">
+        <div class="tutorial-scene">
+            <div class="tutorial-visual">
+                <img src="assets/tutorial_caseboard.svg" alt="Papan tutorial investigasi">
+            </div>
+            <div class="tutorial-panel">
+                <div class="tutorial-kicker">Pelatihan Investigator</div>
+                <h2 id="tutorial-title">Baca Dokumen</h2>
+                <p id="tutorial-copy">Tutorial muncul di sini.</p>
+                <div class="tutorial-progress" id="tutorial-progress"></div>
+                <div class="tutorial-actions">
+                    <button class="btn btn-outline" id="btn-tutorial-skip">Lewati</button>
+                    <button class="btn btn-primary" id="btn-tutorial-next">Lanjut</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Briefing Screen -->
+    <div id="briefing-screen" class="screen">
+        <div class="briefing-container">
+            <div class="briefing-mentor">
+                <img src="assets/mentor_character_1777081734608.png" alt="Mentor" id="mentor-img">
+            </div>
+            <div class="briefing-dialog">
+                <div class="briefing-name">Inspektur Senior</div>
+                <div class="briefing-text" id="briefing-text">Dialog mentor muncul di sini.</div>
+                <div class="briefing-exchange" id="briefing-exchange"></div>
+                <button class="btn btn-primary" id="btn-start-investigation">Mulai Investigasi (Buka Berkas)</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hub Screen (Desk Folders) -->
+    <div id="hub-screen" class="screen">
+        <div class="hub-header">
+            <img class="hub-level-art" src="assets/level_ladder.svg" alt="">
+            <h2>Meja Kerja Investigator</h2>
+            <p style="font-style: italic; color: #666;">Pilih berkas perkara yang masuk hari ini.</p>
+            <div class="hub-progress">
+                <span id="hub-level-label">Level 1 - Desa</span>
+                <span id="hub-case-progress">0 / 0 kasus selesai</span>
+            </div>
+        </div>
+        <div class="cases-grid" id="cases-container">
+            <!-- Case folders generated here -->
+        </div>
+    </div>
+
+    <!-- Paper Document Screen (Case Analysis) -->
+    <div id="case-screen" class="screen">
+        <div style="text-align: left; width: 100%; max-width: 800px; margin-bottom: 20px;">
+            <button class="btn btn-outline" style="background:#fff;" id="btn-case-back">Tutup Berkas (Kembali)</button>
+        </div>
+        
+        <div class="document-wrapper" id="document-pages">
+            <!-- Page 1: Overview -->
+            <div class="doc-page active" id="doc-page-1">
+                <div class="doc-header">
+                    <div class="doc-logo">RI</div>
+                    <div class="doc-title">Republik Indonesia</div>
+                    <div class="doc-subtitle">Dokumen Laporan Penyelenggaraan Proyek</div>
+                    <div style="font-family: var(--font-sans); font-size: 14px; font-weight: bold; margin-top: 15px;" id="case-title">NAMA KASUS</div>
+                </div>
+
+                <div class="doc-meta-grid">
+                    <div class="doc-meta-item"><span class="doc-meta-label">Lokasi</span><span id="case-region">-</span></div>
+                    <div class="doc-meta-item"><span class="doc-meta-label">Kategori</span><span id="case-category">-</span></div>
+                    <div class="doc-meta-item"><span class="doc-meta-label">Vendor Utama</span><span id="case-vendor">-</span></div>
+                    <div class="doc-meta-item"><span class="doc-meta-label">Durasi Terjadwal / Aktual</span><span id="case-timeline">-</span></div>
+                </div>
+
+                <div class="doc-section">
+                    <h3>I. Ringkasan Proyek</h3>
+                    <div class="doc-text" id="case-desc">Deskripsi proyek akan ditampilkan di sini.</div>
+                </div>
+            </div>
+
+            <!-- Page 2: Budget -->
+            <div class="doc-page" id="doc-page-2">
+                <div class="doc-section">
+                    <h3>II. Laporan Keuangan & Realisasi</h3>
+                    <div style="font-family: var(--font-mono); margin-bottom: 10px;">
+                        <strong>Total Anggaran:</strong> <span id="case-budget">Rp 0</span><br>
+                        <strong>Total Realisasi:</strong> <span id="case-spent">Rp 0</span> (<span id="case-progress">0% Fisik</span>)
+                    </div>
+                    <table class="formal-table">
+                        <thead>
+                            <tr>
+                                <th>Pos Pembelanjaan</th>
+                                <th>Alokasi (Rp)</th>
+                                <th>Realisasi (Rp)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="budget-table">
+                            <!-- Budget rows -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Page 3: Visual & Signature -->
+            <div class="doc-page" id="doc-page-3">
+                <div class="doc-section">
+                    <h3>III. Catatan Inspeksi Lapangan</h3>
+                    <div class="doc-text" id="case-notes" style="font-family: var(--font-mono); font-size: 13px; margin-bottom: 15px;">-</div>
+                    <div class="visual-evidence-grid" id="visual-evidence-container">
+                        <!-- Visual evidence thumbnails -->
+                    </div>
+                </div>
+
+                <div class="doc-signatures" id="case-personnel">
+                    <!-- Signatures -->
+                </div>
+
+                <div class="stamp" id="doc-stamp">RAHASIA</div>
+            </div>
+        </div>
+
+        <div class="doc-pagination">
+            <button class="btn btn-outline" id="btn-page-prev" style="background:#fff;">&larr; Halaman Sebelumnya</button>
+            <span id="page-indicator">1 / 3</span>
+            <button class="btn btn-outline" id="btn-page-next" style="background:#fff;">Halaman Berikutnya &rarr;</button>
+        </div>
+
+        <div class="investigation-panel" id="investigation-panel">
+            <div class="intel-card">
+                <img class="intel-icon" src="assets/evidence_badge.svg" alt="">
+                <span class="intel-label">Bukti</span>
+                <strong id="intel-evidence-count">0 / 7</strong>
+            </div>
+            <div class="intel-card">
+                <img class="intel-icon" src="assets/analysis_radar.svg" alt="">
+                <span class="intel-label">Kekuatan</span>
+                <strong id="intel-evidence-score">0.0</strong>
+            </div>
+            <div class="intel-card">
+                <img class="intel-icon" src="assets/case_emblem.svg" alt="">
+                <span class="intel-label">Risiko</span>
+                <strong id="intel-risk-level">Rendah</strong>
+            </div>
+            <button class="btn btn-primary" id="btn-open-analysis">Analisis Bukti</button>
+            <button class="btn btn-outline quest-btn" id="btn-open-quests" style="background:#fff;"><img src="assets/quest_scroll.svg" alt=""> Quest Level</button>
+        </div>
+
+        <div class="case-actions">
+            <button class="btn btn-success" id="btn-resolve-release">Lepaskan (Bebas Masalah)</button>
+            <button class="btn btn-outline" id="btn-resolve-trial" style="background:#fff;">Bawa ke Sidang</button>
+            <button class="btn btn-danger" id="btn-resolve-arrest">Tangkap Langsung (Risiko Tinggi)</button>
+        </div>
+    </div>
+
+    <!-- Phone Icon & Overlay -->
+    <div id="phone-icon" class="hidden"></div>
+    
+    <div id="phone-overlay">
+        <div class="phone-notch"></div>
+        <div class="phone-header">
+            <button class="phone-nav-btn" id="btn-phone-back" style="visibility: hidden;">&#8592;</button>
+            <span class="phone-title" id="phone-app-title">Chirp</span>
+            <button class="phone-nav-btn" id="btn-phone-close">&times;</button>
+        </div>
+        
+        <!-- View 1: Home Feed & Search -->
+        <div id="phone-view-home" class="phone-view active">
+            <div class="phone-search">
+                <input type="text" id="phone-search-input" placeholder="🔍 Cari nama, topik, proyek...">
+            </div>
+            <div class="phone-feed" id="phone-feed">
+                <!-- Posts go here -->
+                <div style="text-align: center; margin-top: 50px; color: var(--anime-muted); font-size: 14px; font-weight: bold;">
+                    Ketik kata kunci untuk mencari informasi<br>(Cth: nama pejabat, lokasi, kontraktor)
+                </div>
+            </div>
+        </div>
+
+        <!-- View 2: Profile -->
+        <div id="phone-view-profile" class="phone-view">
+            <div class="profile-header">
+                <div class="profile-avatar-large" id="profile-avatar">👤</div>
+                <div class="profile-name" id="profile-name">Nama Akun</div>
+                <div class="profile-handle" id="profile-handle">@handle</div>
+                <div class="profile-bio" id="profile-bio">Bio pengguna di sini.</div>
+                <div class="profile-stats">
+                    <div class="profile-stat-col">
+                        <span class="profile-stat-val" id="profile-following">120</span>
+                        <span class="profile-stat-lbl">Mengikuti</span>
+                    </div>
+                    <div class="profile-stat-col">
+                        <span class="profile-stat-val" id="profile-followers">4.5K</span>
+                        <span class="profile-stat-lbl">Pengikut</span>
+                    </div>
+                    <div class="profile-stat-col">
+                        <span class="profile-stat-val" id="profile-posts">892</span>
+                        <span class="profile-stat-lbl">Kiriman</span>
+                    </div>
+                </div>
+            </div>
+            <div class="phone-feed" id="profile-feed">
+                <!-- Profile's recent history goes here -->
+            </div>
+        </div>
+
+        <!-- View 3: Thread (Post + Comments) -->
+        <div id="phone-view-thread" class="phone-view">
+            <div id="thread-main" style="background: var(--anime-card);">
+                <!-- Main post goes here -->
+            </div>
+            <div class="thread-replies-title">Balasan</div>
+            <div id="thread-replies">
+                <!-- Comments go here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Interactive Courtroom Debate -->
+    <div id="court-screen" class="screen">
+        <div class="court-container">
+            <div class="court-header">
+                <div class="court-title">Sidang Gelar Perkara</div>
+                <div class="meter-container">
+                    <div class="meter-bar" id="court-meter-bar" style="width: 50%;"></div>
+                    <div class="meter-marker"></div>
+                    <div class="meter-labels">
+                        <span style="position: absolute; left: 10px; color: #fff;">Dominasi Anda</span>
+                        <span style="position: absolute; right: 10px; color: #fff;">Bantahan Pembela</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="court-battle">
+                <div class="court-side court-side-player">
+                    <div class="court-char-label">Anda (Investigator)</div>
+                </div>
+                <div class="court-log" id="court-log">
+                    <div class="speech-bubble player">
+                        <div class="bubble-meta">Hakim</div>
+                        Sidang dibuka. Silakan Penuntut membacakan dakwaan dan mengajukan alat bukti.
+                    </div>
+                </div>
+                <div class="court-side">
+                    <div class="court-char-label">Tim Pembela</div>
+                </div>
+            </div>
+            
+            <div class="court-actions">
+                <div class="action-status">
+                    <span id="court-round-status">Ronde: 1 / 5</span>
+                    <span id="court-combo-status">Pilih 1 Bukti (Atau 2 untuk Rantai Bukti)</span>
+                </div>
+                <div class="evidence-hand" id="court-hand">
+                    <!-- Collected evidence cards injected here -->
+                </div>
+                <div class="action-buttons">
+                    <button class="btn btn-primary btn-lg" id="btn-court-present">Ajukan Bukti Terpilih</button>
+                    <button class="btn btn-danger btn-lg" id="btn-court-end">Akhiri Sidang (Putusan Hakim)</button>
+                </div>
+            </div>
+
+            <div class="court-result-overlay" id="court-result-overlay">
+                <div class="result-stamp" id="court-result-stamp">VONIS</div>
+                <div class="result-stats">
+                    <div><span>Skor Dominasi:</span> <strong id="court-final-score">0</strong></div>
+                    <div><span>Dampak Anggaran:</span> <strong id="court-final-funds">0</strong></div>
+                    <div><span>Dampak Reputasi:</span> <strong id="court-final-rep">0</strong></div>
+                </div>
+                <button class="btn btn-outline" style="color:white; border-color:white;" id="btn-court-next">Tutup Berkas Kasus</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Ending Screen -->
+    <div id="ending-screen" class="screen">
+        <div class="ending-card">
+            <img class="ending-asset" src="assets/ending_reform.svg" alt="Ilustrasi akhir investigasi">
+            <div class="ending-title" id="ending-title">Judul Ending</div>
+            <div class="ending-subtitle" id="ending-subtitle">Subjudul Ending</div>
+            <div class="ending-desc" id="ending-desc">Deskripsi naratif ending.</div>
+        
+            <div class="ending-stats">
+                <div>Kasus: <span id="end-stat-cases">0</span></div>
+                <div>Integritas: <span id="end-stat-corr">0%</span></div>
+                <div>Level: <span id="end-stat-level">Desa</span></div>
+            </div>
+            
+            <button class="btn btn-outline" style="color:white; border-color:white;" onclick="location.reload()">Mulai Investigasi Baru</button>
+        </div>
+    </div>
+
+    <!-- Persistent On-Screen Character -->
+    <div id="player-character-container" class="hidden">
+        <img src="assets/player_reading_1777081691511.png" id="player-sprite-reading" class="player-sprite active" alt="Player Reading">
+        <img src="assets/player_phone_1777081712654.png" id="player-sprite-phone" class="player-sprite" alt="Player Phone">
+    </div>
+
+    <!-- Dialogue Overlay -->
+    <div id="dialogue-overlay" class="hidden">
+        <div class="dialogue-box">
+            <div class="dialogue-name" id="dialogue-name">Nama</div>
+            <div class="dialogue-text" id="dialogue-text"></div>
+            <div class="dialogue-continue">Klik untuk melanjutkan...</div>
+        </div>
+    </div>
+
+    <!-- Quests & Achievements Overlay -->
+    <div id="quest-container">
+        <!-- Quest items go here -->
+    </div>
+    
+    <div id="achievement-popup" class="hidden">
+        <div class="achieve-icon">🏆</div>
+        <div class="achieve-text">
+            <div class="achieve-title">Pencapaian Terbuka!</div>
+            <div class="achieve-desc" id="achieve-desc">Deskripsi pencapaian</div>
+        </div>
+    </div>
+
+    <!-- Tutorial Overlay (Dim background) -->
+    <div id="tutorial-overlay" class="hidden"></div>
+
+    <!-- Scripts -->
+    <script src="audio.js"></script>
+    <script src="data.js"></script>
+    <script src="game.js"></script>
+    <script src="ui.js"></script>
+    <script src="trial.js"></script>
+</body>
+</html>

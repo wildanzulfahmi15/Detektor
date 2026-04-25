@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 120" role="img" aria-label="Tangga level investigasi">
+  <rect width="220" height="120" rx="12" fill="#fdfaf6"/>
+  <path d="M34 92h36V70h36V48h36V26h44" fill="none" stroke="#4a6c8c" stroke-width="12" stroke-linejoin="round"/>
+  <circle cx="34" cy="92" r="10" fill="#c04e4e"/>
+  <circle cx="106" cy="70" r="10" fill="#d4af37"/>
+  <circle cx="186" cy="26" r="10" fill="#2e7d32"/>
+</svg>
