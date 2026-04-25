@@ -259,7 +259,7 @@ canvas {
 
 .btn-outline:hover {
   background: #2b2b2b;
-  color: #fff;
+  color: black;
 }
 
 .btn-lg {
@@ -2595,6 +2595,7 @@ height: clamp(100px, 12vw, 180px);
   .tutorial-scene {
     grid-template-columns: 1fr;
     max-width: 760px;
+    margin-top: 50px;
   }
 
   .tutorial-visual img {
@@ -2608,6 +2609,9 @@ height: clamp(100px, 12vw, 180px);
   #evidence-screen {
     padding-left: 18px;
     padding-right: 18px;
+  }
+  #case-screen{
+    margin-top: 50px;
   }
 
   .cases-grid {
